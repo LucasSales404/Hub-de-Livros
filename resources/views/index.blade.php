@@ -1,5 +1,7 @@
+@include('components.alert')
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -10,7 +12,7 @@
     <title>Document</title>
 </head>
 
-<body class="bg-slate-900">
+<body class="bg-slate-900 relative">
     <header class="w-full h-[80px] bg-slate-950 flex items-center">
         <div class="nome-site">
             <h1 class="text-2xl">Teste</h1>
@@ -27,14 +29,14 @@
             </div>
             <div class="livros flex flex-wrap gap-8">
                 @foreach ($livros as $livro)
-                    <div class="card-livro gap-2 w-[200px] h-[400px] flex flex-col">
+                    <div class="card-livro gap-2 w-[200px] h-[400px] flex flex-col" id="livro-{{ $livro->id }}" >
                         <div class="imagem border-[2px] w-full h-[250px]">
                             <img class="w-full h-full"
                                 src="{{ asset($livro->capa ? 'storage/' . $livro->capa : '/images/livro.png') }}"
                                 alt="">
                         </div>
                         <div class="titulo w-full h-[50px] flex justify-center items-center">
-                            <p class="text-white font-medium">{{ $livro->titulo }}</p>
+                            <p id="livro-titulo-{{ $livro->id }}" class="text-white font-medium">{{ $livro->titulo }}</p>
                         </div>
                         <div class=" flex justify-between gap-2 w-full h-[50px] font-medium">
                             <a href="{{ asset('storage/' . $livro->arquivo) }}" target="_blank">
@@ -103,8 +105,10 @@
             </div>
         </section>
     </main>
+    
     @vite('resources/js/cadastrarLivro.js')
     @vite('resources/js/atualizarLivro.js')
+    @vite('resources/js/deletarLivro.js')
 </body>
 
 </html>

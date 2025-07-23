@@ -1,3 +1,5 @@
+import { exibirMenssagem } from "./alerta.js";
+
 const closeForm = document.querySelector("#closeForm");
 const campoForm = document.querySelector("#campoForm");
 const formLivro = document.querySelector("#formLivro");
@@ -70,13 +72,11 @@ formLivro.addEventListener("submit", async (e) => {
     try {
         let response;
         if (modo === "cadastrar") {
-            alert("Entrou no cadastro");
             response = await fetch("/livros/store", {
                 method: "POST",
                 body: formData,
             });
         } else if (modo === "editar" && livroIdAtual) {
-            alert("Entrou no editar");
             formData.append("_method", "PUT"); 
             response = await fetch(`/livros/update/${livroIdAtual}`, {
                 method: "POST",
@@ -85,21 +85,23 @@ formLivro.addEventListener("submit", async (e) => {
                 },
                 body: formData,
             });
-        } else {
-            alert("Modo inválido ou nenhum livro selecionado para editar.");
-            return;
-        }
-
+        } 
         const data = await response.json();
 
         if (data.error) {
-            alert(data.error);
+            exibirMenssagem(data.message);
         } else {
             campoForm.classList.add("hidden");
-            window.location.reload();
+            if(modo == 'cadastrar'){
+                window.location.reload();
+            }else{
+                const novoTitulo = inputTitulo.value;
+                document.querySelector(`#livro-titulo-${livroIdAtual}`).textContent = novoTitulo;
+            }
+                exibirMenssagem(data.message);
         }
     } catch (err) {
         console.error("Erro ao enviar:", err);
-        alert("Erro ao enviar o formulário.");
+        exibirMenssagem("Erro ao enviar o formulalertário.");
     }
 });
