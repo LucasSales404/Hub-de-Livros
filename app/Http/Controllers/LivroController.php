@@ -99,6 +99,10 @@ public function store(LivroRequest $request)
      */
     public function destroy(Livro $livro)
     {
-        //
+        $livro->delete();
+        return response()->json([
+        'success' => true,
+        'message' => 'Livro deletado com sucesso!'
+    ]);
     }
 }
