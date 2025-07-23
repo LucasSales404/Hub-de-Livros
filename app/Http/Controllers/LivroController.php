@@ -13,7 +13,8 @@ class LivroController extends Controller
      */
     public function index()
     {
-        return view("index");
+        $livros = Livro::all();
+        return view("index", compact("livros"));
     }
 
     /**
@@ -27,11 +28,32 @@ class LivroController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(LivroRequest $request)
-    {
-        $path = $request->file('arquivo')->store('books', 'public');
-        return redirect()->back()->with('success', 'Arquivo enviado com sucesso!');
+public function store(LivroRequest $request)
+{
+    $pdfPath = null;
+    $capaPath = null;
+
+    if ($request->hasFile('arquivo')) {
+        $pdfPath = $request->file('arquivo')->store('books', 'public');
     }
+
+    if ($request->hasFile('capa')) {
+        $capaPath = $request->file('capa')->store('images', 'public');
+    }
+
+    Livro::create([
+        'titulo' => $request->titulo,
+        'arquivo' => $pdfPath,
+        'capa' => $capaPath,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Livro cadastrado com sucesso!',
+    ]);
+}
+
+
 
     /**
      * Display the specified resource.
@@ -54,7 +76,22 @@ class LivroController extends Controller
      */
     public function update(Request $request, Livro $livro)
     {
-        //
+        $livro->fill($request->except(['capa', 'arquivo']));
+        if($request->hasFile('capa')){
+            $capaPath = $request->file('capa')->store('images', 'public');
+            $livro->capa = $capaPath;
+        }
+
+        if($request->hasFile('arquivo')){
+            $pdfPath = $request->file('arquivo')->store('books', 'public');
+            $livro->arquivo = $pdfPath;
+        }
+        $success = $livro->save();
+
+        return response()->json([
+            'success'=> $success,
+            'message'=> $success ? 'Livro atualizado com sucesso!' : 'Erro ao atualizar livro',
+        ]);
     }
 
     /**

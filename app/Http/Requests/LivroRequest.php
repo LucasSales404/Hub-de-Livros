@@ -27,12 +27,17 @@ class LivroRequest extends FormRequest
                 'max:255',
                 'min:3',
                 'string'
-                ],
-             'arquivo' => [
+            ],
+            'capa' => [
+                'image',
+                'max:5000'
+            ],
+
+            'arquivo' => [
                 'required',
                 'file',
                 'mimes:pdf',
-                ]
-            ];
+            ]
+        ];
     }
 }
